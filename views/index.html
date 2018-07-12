@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Web Robot</title>
+  <style type="text/css">
+    body {
+      font-family: sans-serif;
+    }
+
+    input {
+      font-size: 1em;
+    }
+
+    .hidden {
+      display: none;
+    }
+    .main-content {
+      width: fit-content;
+      margin: auto;
+    }
+    .map-content {
+      float: left;
+    }
+    .canvas-container {
+      width: 500px;
+      height: 500px;
+      border: 5px solid black;
+      background: url(images/c5.jpg)
+    }
+    .controls {
+      float: left;
+      min-width: 450px;
+    }
+    .control-panel {
+      padding: 10px 20px 0 20px;
+      background-color: gray;
+      min-height: 500px;
+    }
+    .control-panel h4 {
+      margin: 5px 0;
+      text-align: center;
+    }
+    .control-caption {
+      margin: 10px 0;
+    }
+    .control-buttons {
+      background-color: #aaa;
+      padding: 10px 0 5px 10px;
+      min-height: 80px;
+      border-radius: 10px;
+    }
+    .game-header {
+      font-weight: bold;
+      margin-bottom: 10px;
+      display: grid;
+      grid: auto / auto-flow 3fr 1fr;
+    }
+    .player-name {
+      margin-right: 5px;
+      font-size: 1.2em;
+      color: white;
+    }
+    .simple-button {
+      border: 1px solid #bbb;
+      overflow: visible;
+      font: bold 13px arial, helvetica, sans-serif;
+      text-transform: uppercase;
+      white-space: nowrap;
+      color: #555;
+      padding: 4px 12px;
+      background: #e9e9e9;
+      position: relative;
+      vertical-align: top;
+      color: #fff;
+      text-shadow: 0 1px 0 rgba(0,0,0,.2);
+      box-shadow: 0 1px 1px rgba(0, 0, 0, .3) inset;
+      background-image: linear-gradient(top, rgba(255,255,255,.3), rgba(255,255,255,0));
+    }
+    .simple-button.green{
+      background-color: #57a957;
+      border-color: #57a957;
+    }
+    .simple-button.green:hover{
+      background-color: #62c462;
+    }
+    .simple-button.red{
+      background-color: #ca3535;
+      border-color: #c43c35;
+    }
+    .simple-button.red:hover{
+      background-color: #ee5f5b;
+    }
+    .simple-button.blue{
+      background-color: #269CE9;
+      border-color: #269CE9;
+    }
+    .simple-button.blue:hover{
+      background-color: #70B9E8;
+    }
+    .icon-button {
+      border-width: 1px;
+      border-radius: 15px;
+      outline: none;
+      margin: 0 10px 0 0;
+      width: 66px;
+      height: 66px;
+      box-shadow: 1px 9px #eee;
+    }
+    .icon-button:hover {
+      cursor: pointer;
+    }
+    .icon-button:active {
+      background-color: #3e8e41;
+      box-shadow: 0 5px #666;
+      transform: translateY(4px);
+    }
+    .icon-button.move-north {
+      background: no-repeat url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAACVElEQVR4Xu3XP+jOURTH8dcvKSVZSEomm9EgkgGlKBb/FimDksVANpQNZZONwUIWgz8DxSA2i41NIjGIQSQ69aDk8Xz/3Pt9nq/vPfO5557zPp9z/8wZuM0NvH4FQFHAwAmUERi4AMohWEagjMDACZQRGLgAyi1QRqCMwMAJlBEYuADKLTCtEViEC9g7UuB1HMXHrhU5DQDzcQeb/yj2AbbiS5cQpgHgCg6MKfIq9v/PAE7h9IQCz+BkVxC6VEB0PbpfxQ7ichXHtj5dAdiEu4j5r2JfsQ33qji38ekCwGo8wuKaiX7ABjyrua6We24Ay/EEK2tl9dv5JdbidcP1E5flBLAQD7FmYhb/dniKjfjUMs5fl+cCMA83sT1R0rexA98SxfsVJheAizicONlLGWJm+Qscw7nExf8MdwJnU8ZOrYDduEYWsFH3d+xD/B2SWEoA63EfC5JkNj7IZ2wZXa2tt0oFYBUeY0nrjKoFeI91eF7NfbxXCgBRdBQfELq0FyMI79ps2hZAyD1kH/KfhgX4eGbHWDSyNgBibRxGuxrtnG7RDewZHZC1o7YBEFddXHmzYOdxvEkiTQHEIyceO7NkR5rk1ARAPG/jmRvP3VmyeCbvxK06STUB8AbL6mzSoe8rrKizXxMAb7G0ziYd+kZz4gte2ZoAiF9ZfExqbVQ5o+aO0f1DiJ9jZWsCoHLwPjgWAH3oUs4ciwJy0u1D7KKAPnQpZ45FATnp9iF2UUAfupQzx6KAnHT7ELsooA9dypljUUBOun2IXRTQhy7lzHHwCvgBvcE/QRbk4B8AAAAASUVORK5CYII=);
+    }
+    .icon-button.move-east {
+      background: no-repeat url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAACZElEQVR4Xu2aPUsdQRSGn/sbUgT/UohR0xkt/ECJpgghpLFQCBapgoig+AGCBK2UkCIhICHEQhFbMYEYbIImoDYqfqByYG538c7inD1zmdl2Z8+873POzO7MbIXEr0ri/skAcgUkTiAPgcQLIE+CeQjkIZA4gTwEFAqgFZgBroAe4LNCH8FCalTAPvDQKRQIgw5IMNEhA2kAuKkh8B0wBNS6F9JP4VhlARBhi0A3cF5YpeIDZQIQGz8AmSMOFT0VCl02ABH3E3gE7BZSqtTYAoBY+Qc8ATaUfHmHtQIgAs+ADmDFW61CQ0sAYucaeA2MKXjzCmkNoCpyHHjlgHgJD9UoFgDi5yPwDDgNZc4nTkwARO8m0Awc+IgP0SY2AOLpj3tN7oQwWC9GjABE8xHQBnyvZ+C+92MFIL4u3Gryw31N3vV8zABEtyyehoFRLQixA6j6ngOeuz2GoCwaBYCY/go8BU5CEmgkAOJ70m2wBGPQaABkGf0gmHtQORjR3PVJHsAUMJBqBawCLalOgvNAP3AZMvsSqxEmwRHgbWjj1XgxA5Bs9wILWuZjroBj99HzTdN8rAD23HJ4W9t8jAC2gMeAHK+VcsU0B3wC2kO/5upRjAXABPAyxU1R2RZ/A7yvlymt+5YVIAcjncCyljmfuFYA/rujsXUfkZptLAD8cq+535rGfGOXDWDNLWiSPB5fArpS/UEiqV9k/gJNbgzKT1IvgGnfMVl2O405QM72Zt3BRh/wpWxTRfrTAFCkf/O2GYB5CowF5AowToB597kCzFNgLCBXgHECzLvPFWCeAmMByVfALU00c0FQsGn7AAAAAElFTkSuQmCC);
+    }
+    .icon-button.move-south {
+      background: no-repeat url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAACfElEQVR4Xu3Yz6tIQRQH8M+LsMAGEVnJUlkiRUJJSn4k2SlRFqJEbBUWSnoLip1CSkkhyQJF+QdkwY6i2JHyq9F9m+fl3Tt35r5bd2Z9zvl+z3e+587MHTHwNTLw/hUBigMGrkAZgYEboHwEywiUERi4AmUEBm6AcgqUESgjMHAFyggM3ADlFIgZge24jIU9c88HHMS9JrxiBPiE+U1AOoz92HRjYgQISi/qsKkmUO+xpElCjABbcRfTmgB1EPsD2/CwCVaMAKH+YYw2Aeog9gCuNsWJFSDgXMCxpoCZ4s/iVEztNgKE3NvYGQOcMOcG9uF3TM02AgS8WXiC1THgCXKeYjO+x9ZqK0DAXYAXWBZLIjLvNdbgS2T+37QUAoQ6yysR5rUh0yA3nPer8K5BzoShqQQIxdfiMWa2JTVJ/lesx6sUOCkFCHz2IHyUUtcd6/UXdlT3kBT9ZyF6AueSsPu3yBFcSlk7106Fx1J4mKRcF3E0ZcGUH8HxvMI1ObzKtiQifAe7EUYg6crlgEByNp5hZUvGL7EB31rWyX4KTASwGKGBpZHk31bHXXiCZ1k5HTBGeAWeY27DDj5XN8w3DfMahXchQCC0CfcxvSa7cLXdWAlXMyUurCsBArv9uFaDZnjU7MWtGrGtQ7oUIJA9g9OTsD6J8607q1mgawECrevV83UiildwqCb3JGFTIcAMPMK6cR08qH5p/UzSWc0iUyFAoDan+qO0q7rc3MTxXGf9/7SYKgFq7k/+sCJAfo37jVAc0O/9yc+uOCC/xv1GKA7o9/7kZ1cckF/jfiMUB/R7f/KzKw7Ir3G/EYoD+r0/+dkVB+TXuN8Ig3fAH8alQUH85V+3AAAAAElFTkSuQmCC);
+    }
+    .icon-button.move-west {
+      background: no-repeat url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAACpElEQVR4Xu2aS2sUQRSFv6j4JIoEFaILJQi60Y1IIITsJLgQQRDRRcBHICAILnShOxe6CEIIiAlilCCCghJf+UXBvfgDwoUKDKF7qqr7NKSmqrZ96+Occ2/39GOGyHwNZe6fEkCZgMwTKKdA5gNQLoLlFCinQOYJlFMggQG4BiwDu4D7wA+l5p0+AY+A1868+f4LjOYQgHXbjFsA25e0aVKYqDMHgU/A9RqeVLMUJgjgOPATuNyHJdUshbUM4BzwBzjj4Ug1S2EtApgCvgNHAxhSzVJYgPiqktvACrA3cL9UsxQWaKC37BnwAqIeyqSapbCIAPYAb4F7EXu2SqWapbBAM4eBr8CVwPqBug84BfwGLjQ0b9ukTZPCPKYuOvMnW5hPNoBp4Asw3NJ8kgE8AN4AduFTLOnUSmHb3Bn7JfBU4bqHIdUshfWI3Ad8AG6JzSdxChxxDzSTHZhPIgDr/ExH5pMI4D9wKOcA/ol+7uoylF63pDCneAmYzXkCbPy/tbjX92UnbZoU1qPcbnpsEu763DQ4LtUshVWYee6e9xv4rN0i1SyF1Ui+A7yPeOPjC0uqWQrrozzmnd9ABmCmzru3vqd9Dj3HpU2TwgKMnQB+AZcCapO9D/B5sy8/nwH76NlkSZsmhUW4sW9/C8DDiD1bpVLNUlgDM4+B+cj3fFLNUliDAGzLDWAVOBC4X6pZCgs0UFU27v74cCyAIdUshQWI71cyBqwDZwf5Z9CX0QiwBkz0KZQ2TQrzuQs8vh/4CNysqZdqlsICDYaUma5XwJOKYqlmKSzEWWTNHLAI7Hb7NgD7vCZbOz0AM3oVeOfuFexrsv2LRLZSCEBmtgpUAug03gTgZQISaFKnEssEdBpvAvAyAQk0qVOJZQI6jTcBePYTsAkylixB4m8USwAAAABJRU5ErkJggg==);
+    }
+    .icon-button.left {
+      background: no-repeat url(data:image/png;base64,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);
+    }
+    .icon-button.right {
+      background: no-repeat url(data:image/png;base64,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);
+    }
+    .divider {
+      clear: both;
+    }
+    .controls-grid {
+      display: grid;
+      grid-row-gap: 10px;
+      grid-column-gap: 10px;
+      font-weight: bold;
+    }
+    .grid-1-1 form {
+      margin-bottom: 20px;
+    }
+    .grid-1-2 {
+      grid-column: 2;
+    }
+    .game-footer {
+      width: fit-content;
+      margin: auto;
+      border: thin;
+      margin-top: 10px;
+      padding: 1px 5px;
+      border-radius: 10px;
+      background-color: steelblue;
+      color: white;
+      line-height: 1.5em;
+    }
+    .command-history {
+      border: 1px ridge white;
+      height: 190px;
+      line-height: 1.2em;
+      margin-top: 5px;
+      padding-left: 5px;
+      overflow-y: scroll;
+      font-family: monospace;
+      font-weight: normal;
+      background-color: #000;
+      color: #0F0;
+    }
+    .command-history .error {
+      font-style: italic;
+      color: red;
+      cursor: help;
+    }
+
+    .help-menu {
+      margin-top: 10px;
+    }
+    .help-menu .control-caption {
+      color: white;
+    }
+    .help-menu table {
+      padding: 3px;
+      text-align: left;
+      background-color: #ccc;
+      border: 1px solid #000;
+      border-radius: 10px;
+      font-size: 0.9em;
+    }
+    .help-menu table td {
+      font-style: italic;
+    }
+    .notification {
+      opacity: 0;
+      position: absolute;
+      padding: 10px;
+      background: black;
+      border: 1px solid white;
+      font-weight: bold;
+      color: #0F0;
+      z-index: 1001;
+    }
+    .notification.fade-in {
+      transition: opacity 0.2s ease-in;
+      opacity: 1;
+    }
+    .notification.fade-out {
+      transition: opacity 1.0s ease-out;
+      opacity: 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="main-content">
+    <div class="map-content">
+      <h2>Grid</h2>
+      <div class="canvas-container">
+        <canvas id="canvas"/>
+      </div>
+    </div>
+    <div class="controls">
+      <h2>Play</h2>
+      <div class="control-panel">
+        <div class="game-header" data-bind="visible: !isConnected()">
+          <div>Name: <input type="text" name="name" data-bind="textInput: robotName"></div>
+          <button class="green simple-button" data-bind="click: window.controller.enterGame">Enter game</button>
+        </div>
+        <div class="game-header" style="display: none;" data-bind="visible: isConnected(), css: { hidden: !isConnected() }">
+          <div>Now playing: <span class="player-name" data-bind="text: robotName"></span></div>
+          <button class="red simple-button" data-bind="click: window.controller.exitGame">Leave game</button>
+        </div>
+        <div class="hidden" data-bind="visible: isConnected(), css: { hidden: !isConnected() }">
+          <hr/>
+          <div class="controls-grid">
+            <div class="grid-1-1">
+              <div class="control-caption">Text commands</div>
+              <form data-bind="submit: window.controller.sendCommand">
+                <input type="text" name="command" size="15" data-bind="textInput: inputCommand">
+                <button class="blue simple-button" type="submit">Send</button>
+              </form>
+              <div class="control-caption">Command log</div>
+              <div class="command-history" data-bind="foreach: allCommands">
+                <div data-bind="css: { error: error() != null }, attr: { title: error }">&gt; <span data-bind="text: text"/></div>
+              </div>
+            </div>
+            <div class="grid-1-2" data-bind="style: { visibility: isMyRobotOnGrid() ? 'visible' : 'hidden' }">
+              <div class="control-caption">Mouse commands</div>
+              <div class="control-buttons">
+                <button title="Rotate Left" data-bind="click: window.controller.executeCommand_left" class="icon-button left" />
+                <button title="Move" data-bind="click: window.controller.executeCommand_move, css: myRobotDirection" class="icon-button"/>
+                <button title="Rotate Right" data-bind="click: window.controller.executeCommand_right" class="icon-button right" />
+              </div>
+            </div>
+          </div>
+          <div class="help-menu">
+            <div class="control-caption">Commands syntax</div>
+            <table border="0">
+              <tr>
+                <th>
+                  place x, y, (north | east | south | west)
+                </th>
+                <td>place robot on the map</td>
+              </tr>
+              <tr>
+                <th>move</th>
+                <td>advance by 1 step</td>
+              </tr>
+              <tr>
+                <th>right</th>
+                <td>rotate right</td>
+              </tr>
+              <tr>
+                <th>left</th>
+                <td>rotate left</td>
+              </tr>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="divider"></div>
+    <div class="hidden game-footer" data-bind="visible: isConnected() &amp;&amp; !isMyRobotOnGrid(), css: { hidden: !isConnected() || isMyRobotOnGrid() }">
+      <p>Assign your robot a position on the grid:</p>
+      <ul>
+        <li>Enter the <span style="font: italic 1.3em monospace;">place</span> command</li>
+        <span>or</span>
+        <li>double-click on a grid cell</li>
+      </ul>
+    </div>
+  </div>
+  <div class="notification" data-bind="style: { top: notification.top, left: notification.left }, css: { 'fade-in': notification.isVisible(), 'fade-out': !notification.isVisible() }">
+    <div data-bind="text: notification.content"></div>
+  </div>
+
+  <script src="/lib/system.js"></script>
+  <script src="/js/app.js"></script>
+</body>
+</html>
+
