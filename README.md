@@ -10,7 +10,7 @@ This version of the exercise offers a Web based interface where the user can use
 The implementation uses a `ruby/sinatra` backend, `WebSockets` and standard `javascript`.
 
 ### Pre-requisites
-- ruby, version 2.3 or above
+- ruby, version 2.5 or higher
 - `bundler` gem, version 1.16 or higher
 
 ### Install
